@@ -326,13 +326,11 @@ def pause_menu():
     options = ["Play", "Restart", "How to Play"]
 
     while paused:
-        SCREEN.blit(MENU_BG, (0, 0))  # background color
+        SCREEN.blit(MENU_BG, (0, 0))
 
-        # Title
         title_text = title_font.render("Game Paused", True, (255, 0, 0))
         SCREEN.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() // 2, 100))
 
-        # Instructions
         if selected_option == 2:
             instructions = [
                 "Press SPACE or UP arrow key to Jump",
@@ -361,13 +359,13 @@ def pause_menu():
                 elif event.key == pygame.K_DOWN:
                     selected_option = (selected_option + 1) % len(options)
                 elif event.key == pygame.K_RETURN:
-                    if selected_option == 0:  # Play
+                    if selected_option == 0:
                         paused = False
-                    elif selected_option == 1:  # Restart
+                    elif selected_option == 1:
                         mixer.music.stop()
-                        main()  # restart game
+                        main()
                         return
-                    elif selected_option == 2:  # How to Play
+                    elif selected_option == 2:
                         pass
                 elif event.key == pygame.K_ESCAPE:
                     paused = False
