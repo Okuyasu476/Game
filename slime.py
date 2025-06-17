@@ -9,26 +9,27 @@ SCREEN_HEIGHT = 720
 SCREEN_WIDTH = 1280
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-RUNNING = [pygame.image.load(os.path.join("Assets/Dino", "JackRun1.png")),
-           pygame.image.load(os.path.join("Assets/Dino", "JackRun2.png"))]
-JUMPING = pygame.image.load(os.path.join("Assets/Dino", "DinoJump.png"))
-DUCKING = [pygame.image.load(os.path.join("Assets/Dino", "DinoDuck1.png")),
-           pygame.image.load(os.path.join("Assets/Dino", "DinoDuck2.png"))]
+RUNNING = [pygame.image.load(os.path.join("Assets/Player", "JackRun1.png")),
+           pygame.image.load(os.path.join("Assets/Player", "JackRun2.png"))]
+JUMPING = pygame.image.load(os.path.join("Assets/Player", "DinoJump.png"))
+DUCKING = [pygame.image.load(os.path.join("Assets/Player", "DinoDuck1.png")),
+           pygame.image.load(os.path.join("Assets/Player", "DinoDuck2.png"))]
 
-SMALL_CACTUS = [pygame.image.load(os.path.join("Assets/Cactus", "SmallCactus1.png")),
-                pygame.image.load(os.path.join("Assets/Cactus", "SmallCactus2.png")),
-                pygame.image.load(os.path.join("Assets/Cactus", "SmallCactus3.png"))]
-LARGE_CACTUS = [pygame.image.load(os.path.join("Assets/Cactus", "LargeCactus1.png")),
-                pygame.image.load(os.path.join("Assets/Cactus", "LargeCactus2.png")),
-                pygame.image.load(os.path.join("Assets/Cactus", "LargeCactus3.png"))]
+SMALL_CACTUS = [pygame.image.load(os.path.join("Assets/Obstacle", "SmallObstacle1.png")),
+                pygame.image.load(os.path.join("Assets/Obstacle", "SmallObstacle2.png")),
+                pygame.image.load(os.path.join("Assets/Obstacle", "SmallObstacle3.png"))]
+LARGE_CACTUS = [pygame.image.load(os.path.join("Assets/Obstacle", "LargeObstacle1.png")),
+                pygame.image.load(os.path.join("Assets/Obstacle", "LargeObstacle2.png")),
+                pygame.image.load(os.path.join("Assets/Obstacle", "LargeObstacle3.png"))]
 
 BIRD = [pygame.image.load(os.path.join("Assets/Bird", "Bird1.png")),
         pygame.image.load(os.path.join("Assets/Bird", "Bird2.png"))]
 
-CLOUD = pygame.image.load(os.path.join("Assets/Other", "Cloud.png"))
-BG = pygame.image.load(os.path.join("Assets/Other", "grass.png"))
+NOTE = pygame.image.load(os.path.join("Assets/Other", "note.png"))
+BG = pygame.image.load(os.path.join("Assets/Background", "Ground.png"))
 
-MENU_BG = pygame.image.load(os.path.join("Assets/BG", "Wild_West.JPG"))
+MENU_BG = pygame.image.load(os.path.join("Assets/Background", "DesertHills_Main.png"))
+
 
 JUMP_SFX = pygame.mixer.Sound(os.path.join("Assets/sounds", "jump.wav"))
 JUMP_SFX.set_volume(1)
@@ -42,9 +43,16 @@ COIN_SFX.set_volume(1)
 BG_MUSIC_PATH = os.path.join("Assets/sounds", "western.mp3")
 DEATH_MUSIC_PATH = os.path.join("Assets/sounds", "game_over.mp3")
 MENU_MUSIC_PATH = os.path.join("Assets/sounds", "desert.mp3")
-VICTORY_MUSIC_PATH = os.path.join("Assets/sounds", "death.mp3")
+VICTORY_MUSIC_PATH = os.path.join("Assets/sounds", "Victory.mp3")
 
 FONT_PATH = os.path.join('assets', 'font', 'PressStart2P-Regular.ttf')
+TITLE_IMAGE = pygame.image.load(os.path.join("Assets/Other", "Title.png"))
+TITLE_IMAGE = pygame.transform.scale(TITLE_IMAGE, (900, 245 ))
+
+LOADING_FRAMES = [
+    pygame.image.load(f"Assets/Other/loading{i+1}.png").convert_alpha()
+    for i in range(15)
+]
 
 
 
@@ -138,13 +146,13 @@ class Dinosaur:
 
     def draw(self, SCREEN):
         SCREEN.blit(self.image, (self.dino_rect.x, self.dino_rect.y))
-        # pygame.draw.rect(SCREEN, (255, 0, 0), self.hitbox, 2)
+       # pygame.draw.rect(SCREEN, (255, 0, 0), self.hitbox, 2)
 
 class Cloud:
     def __init__(self):
         self.x = SCREEN_WIDTH + random.randint(800, 1000)
         self.y = random.randint(50, 100)
-        self.image = CLOUD
+        self.image = NOTE
         self.width = self.image.get_width()
 
     def update(self):
@@ -162,7 +170,7 @@ class Background:
     def __init__(self):
 
 
-        self.image = pygame.image.load(os.path.join("Assets/BG", "test.png"))
+        self.image = pygame.image.load(os.path.join("Assets/Background", "Bg.png"))
 
 
         self.image_width = self.image.get_width()
@@ -181,6 +189,7 @@ class Background:
     def draw(self, SCREEN):
         SCREEN.blit(self.image, (self.x1, self.y))
         SCREEN.blit(self.image, (self.x2, self.y))
+
 
 class Menu_Background:
     def __init__(self):
@@ -216,7 +225,7 @@ class Obstacle:
 
     def draw(self, SCREEN):
         SCREEN.blit(self.image[self.type], self.rect)
-     #   pygame.draw.rect(SCREEN, (255, 0, 0), self.hitbox, 2)
+        #pygame.draw.rect(SCREEN, (255, 0, 0), self.hitbox, 2)
 
 
 class SmallCactus(Obstacle):
@@ -254,13 +263,13 @@ class Bird(Obstacle):
         if self.index >= 9:
             self.index = 0
         SCREEN.blit(self.image[self.index // 5], self.rect)
-        # pygame.draw.rect(SCREEN, (255, 0, 0), self.hitbox, 2)
+       # pygame.draw.rect(SCREEN, (255, 0, 0), self.hitbox, 2)
         self.index += 1
 
 
 class Coin:
     def __init__(self, obstacle):
-        self.image = pygame.image.load(os.path.join("Assets/BG", "bulb.png"))
+        self.image = pygame.image.load(os.path.join("Assets/Background", "bulb.png"))
         self.rect = self.image.get_rect()
         self.rect.x = obstacle.rect.x + obstacle.rect.width // 2 - self.image.get_width() // 2
 
@@ -276,19 +285,97 @@ class Coin:
     def draw(self, screen):
         if not self.collected:
             screen.blit(self.image, self.rect)
-          #  pygame.draw.rect(screen, (255, 215, 0), self.rect, 1)
+
+def loop_loading_animation(screen, duration_ms=3000, y_pos=600, message="", color=(255, 0, 0), bg_image=None):
+    start_time = pygame.time.get_ticks()
+    frame_index = 0
+    frame_delay = 100
+
+    font = pygame.font.Font(FONT_PATH, 50)
+    text = font.render(message, True, color)
+    text_x = SCREEN_WIDTH // 2 - text.get_width() // 2
+    text_y = SCREEN_HEIGHT // 3 - text.get_height() // 2
+
+    while pygame.time.get_ticks() - start_time < duration_ms:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+
+        if bg_image:
+            screen.blit(bg_image, (0, 0))
+        else:
+            screen.fill((255, 255, 255))
+
+        screen.blit(text, (text_x, text_y))
+
+        frame = LOADING_FRAMES[frame_index]
+        frame_x = SCREEN_WIDTH // 2 - frame.get_width() // 2
+        screen.blit(frame, (frame_x, y_pos))
+
+        pygame.display.update()
+        pygame.time.delay(frame_delay)
+        frame_index = (frame_index + 1) % len(LOADING_FRAMES)
 
 
-# def load_highscore():
-#     try:
-#         with open("highscore.txt", "r") as f:
-#             return int(f.read())
-#     except:
-#         return 0
-#
-# def save_highscore(score):
-#     with open("highscore.txt", "w") as f:
-#         f.write(str(score))
+def pause_menu():
+    paused = True
+    font = pygame.font.Font(FONT_PATH, 30)
+    title_font = pygame.font.Font(FONT_PATH, 50)
+    selected_option = 0
+    options = ["Play", "Restart", "How to Play"]
+
+    while paused:
+        SCREEN.blit(MENU_BG, (0, 0))  # background color
+
+        # Title
+        title_text = title_font.render("Game Paused", True, (255, 0, 0))
+        SCREEN.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() // 2, 100))
+
+        # Instructions
+        if selected_option == 2:
+            instructions = [
+                "Press SPACE or UP arrow key to Jump",
+                "Press DOWN arrow key to Duck",
+                "Press ESC again to return"
+            ]
+            for i, line in enumerate(instructions):
+                line_text = font.render(line, True, (0, 0, 0))
+                SCREEN.blit(line_text, (SCREEN_WIDTH // 2 - line_text.get_width() // 2, 250 + i * 40))
+        else:
+            for i, option in enumerate(options):
+                color = (0, 200, 0) if i == selected_option else (0, 0, 0)
+                option_text = font.render(option, True, color)
+                SCREEN.blit(option_text, (SCREEN_WIDTH // 2 - option_text.get_width() // 2, 250 + i * 50))
+
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    selected_option = (selected_option - 1) % len(options)
+                elif event.key == pygame.K_DOWN:
+                    selected_option = (selected_option + 1) % len(options)
+                elif event.key == pygame.K_RETURN:
+                    if selected_option == 0:  # Play
+                        paused = False
+                    elif selected_option == 1:  # Restart
+                        mixer.music.stop()
+                        main()  # restart game
+                        return
+                    elif selected_option == 2:  # How to Play
+                        pass
+                elif event.key == pygame.K_ESCAPE:
+                    paused = False
+
+
+
+
+
 
 
 def main():
@@ -302,8 +389,6 @@ def main():
     player = Dinosaur()
     cloud = Cloud()
     background_img = Background()
-
-
     points = 0
     game_speed = 20
     x_pos_bg = 0
@@ -326,9 +411,10 @@ def main():
         if points % 100 == 0:
             game_speed += 1
 
-        score_font = pygame.font.Font(FONT_PATH, 20)  # Use same custom font for consistency
+        score_font = pygame.font.Font(FONT_PATH, 20)
         text = score_font.render("Score: " + str(points), True, (0, 0, 0))
-        coin_text = score_font.render("Ideas: " + str(collected_coins), True, (255, 215, 0))
+        coin_text = score_font.render("Ideas: " + str(collected_coins) + "/5", True, (255, 215, 0))
+
         SCREEN.blit(coin_text, (1000, 70))
         SCREEN.blit(text, (1000, 40))
 
@@ -349,10 +435,15 @@ def main():
 
         SCREEN.fill((255, 255, 255))
         userInput = pygame.key.get_pressed()
+        if userInput[pygame.K_ESCAPE]:
+            pause_menu()
 
         background_img.draw(SCREEN)
         background_img.update()
         background()
+
+        cloud.draw(SCREEN)
+        cloud.update()
 
         player.draw(SCREEN)
         player.update(userInput)
@@ -377,16 +468,18 @@ def main():
                 mixer.music.load(DEATH_MUSIC_PATH)
                 mixer.music.set_volume(0.5)
                 mixer.music.play()
-                font = pygame.font.Font(FONT_PATH, 50)
-                game_over_text = font.render("GAME OVER!", True, (255, 0, 0))
-                SCREEN.blit(game_over_text, (SCREEN_WIDTH // 2 - game_over_text.get_width() // 2,
-                                             SCREEN_HEIGHT // 3 - game_over_text.get_height() // 3))
+                # font = pygame.font.Font(FONT_PATH, 50)
+                # game_over_text = font.render("GAME OVER!", True, (255, 0, 0))
+                # SCREEN.blit(game_over_text, (SCREEN_WIDTH // 2 - game_over_text.get_width() // 2,
+                #                              SCREEN_HEIGHT // 3 - game_over_text.get_height() // 3))
+
                 pygame.display.update()
-                pygame.time.delay(5500)
+                loop_loading_animation(SCREEN, 5200, 250, "GAME OVER!", (255, 0, 0), bg_image=MENU_BG)
+
+
+                pygame.time.delay(300)
 
                 death_count += 1
-                # if points > load_highscore():
-                #     save_highscore(points)
 
                 menu(death_count)
 
@@ -413,54 +506,23 @@ def main():
             mixer.music.load(VICTORY_MUSIC_PATH)
             mixer.music.set_volume(0.5)
             mixer.music.play()
-            font = pygame.font.Font(FONT_PATH, 50)
-            victory_text = font.render("VICTORY!", True, (0, 200, 0))
-            SCREEN.blit(victory_text, (SCREEN_WIDTH // 2 - victory_text.get_width() // 2,
-                                       SCREEN_HEIGHT // 3 - victory_text.get_height() // 2))
+
+            # font = pygame.font.Font(FONT_PATH, 50)
+            # victory_text = font.render("VICTORY!", True, (0, 200, 0))
+            # SCREEN.blit(victory_text, (SCREEN_WIDTH // 2 - victory_text.get_width() // 2,
+            #                            SCREEN_HEIGHT // 3 - victory_text.get_height() // 2))
             pygame.display.update()
-            pygame.time.delay(7000)
+            loop_loading_animation(SCREEN, 5500, 250, "VICTORY!", (0, 200, 0), bg_image=MENU_BG)
+            pygame.time.delay(2000)
+
             pygame.quit()
 
-
-            # option_font = pygame.font.Font(FONT_PATH, 20)
-            # continue_text = option_font.render("Press C to Continue", True, (0, 0, 0))
-            # menu_text = option_font.render("Press M for Menu", True, (0, 0, 0))
-            # SCREEN.blit(continue_text, (SCREEN_WIDTH // 2 - continue_text.get_width() // 2, SCREEN_HEIGHT // 2 + 30))
-            # SCREEN.blit(menu_text, (SCREEN_WIDTH // 2 - menu_text.get_width() // 2, SCREEN_HEIGHT // 2 + 70))
-            #
-            # pygame.display.update()
-            #
-            # waiting = True
-            # while waiting:
-            #     for event in pygame.event.get():
-            #         if event.type == pygame.QUIT:
-            #             pygame.quit()
-            #             waiting = False
-            #             run = False
-            #         if event.type == pygame.KEYDOWN:
-            #             if event.key == pygame.K_c:
-            #                 collected_coins = 0
-            #                 coins.clear()
-            #                 mixer.music.load(BG_MUSIC_PATH)
-            #                 mixer.music.set_volume(0.5)
-            #                 mixer.music.play(-1)
-            #                 waiting = False
-            #
-            #             elif event.key == pygame.K_m:
-            #                 menu(death_count)
-            #                 waiting = False
-            #                 return
 
         if coins_spawned_for_score and active_coins == 0:
             next_coin_spawn_score += 300
             coins_spawned_for_score = False
             coins.clear()
 
-
-
-
-        cloud.draw(SCREEN)
-        cloud.update()
         score()
 
         clock.tick(30)
@@ -474,7 +536,6 @@ def menu(death_count):
     mixer.music.set_volume(0.5)
     mixer.music.play(-1)
 
-    # highscore = load_highscore()
     clock = pygame.time.Clock()
     step_index = 0
 
@@ -485,27 +546,28 @@ def menu(death_count):
         SCREEN.fill((255, 255, 255))
         menu_bg.draw(SCREEN)
 
-        title = font.render("THE BRAINSTORMING DUNGEON!", True, (0, 0, 0))
-        SCREEN.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, SCREEN_HEIGHT // 2 - 190))
-
+        title_rect = TITLE_IMAGE.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 190))
+        SCREEN.blit(TITLE_IMAGE, title_rect)
 
         if death_count == 0:
             start_text = font.render("Press Enter to Start", True, (0, 0, 0))
         else:
             start_text = font.render("Press Enter to Restart", True, (0, 0, 0))
-            score = font.render(f"Your Score: {points}", True, (0, 0, 0))
-            SCREEN.blit(score, (SCREEN_WIDTH // 2 - score.get_width() // 2, SCREEN_HEIGHT // 2 + 70))
+            score = font.render(f"Your Score: {points}", True, (255, 215, 0))
+            SCREEN.blit(score, (SCREEN_WIDTH // 2 - score.get_width() // 2, SCREEN_HEIGHT // 2 + 165))
 
-
-        # highscore_text = font.render(f"High Score: {highscore}", True, (0, 128, 0))
         exit_text = font.render("Press Esc to Exit", True, (0, 0, 0))
+        desc_text = ("Objective: Collect 5 idea orbs while avoiding"
+                     "\ndistractions and cliches that get in your way")
 
-        SCREEN.blit(start_text, (SCREEN_WIDTH // 2 - start_text.get_width() // 2, SCREEN_HEIGHT // 2))
-        SCREEN.blit(exit_text, (SCREEN_WIDTH // 2 - exit_text.get_width() // 2, SCREEN_HEIGHT // 2 + 40))
-        # SCREEN.blit(highscore_text, (SCREEN_WIDTH // 2 - highscore_text.get_width() // 2, SCREEN_HEIGHT // 2 - 60))
+        SCREEN.blit(start_text, (SCREEN_WIDTH // 2 - start_text.get_width() // 2, SCREEN_HEIGHT // 2+90))
+        SCREEN.blit(exit_text, (SCREEN_WIDTH // 2 - exit_text.get_width() // 2, SCREEN_HEIGHT // 2 + 130))
+        lines = desc_text.split('\n')
+        for i, line in enumerate(lines):
+            rendered_line = font.render(line, True, (0, 0, 0))
+            SCREEN.blit(rendered_line, (SCREEN_WIDTH // 2 - rendered_line.get_width() // 2, 270 + i * 40))
 
-
-        SCREEN.blit(RUNNING[step_index // 5], (SCREEN_WIDTH // 2 - 20, SCREEN_HEIGHT // 2 - 140))
+        SCREEN.blit(RUNNING[step_index // 5], (SCREEN_WIDTH // 2 - 60, SCREEN_HEIGHT // 2 - 10))
         step_index += 1
         if step_index >= 10:
             step_index = 0
@@ -524,8 +586,5 @@ def menu(death_count):
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     run = False
-
-
-
 
 menu(death_count=0)
